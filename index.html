@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloxObby: Word Builder & Escape - เกมกระโดดข้ามด่านสะกดคำธีม Roblox</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka (Game English) & Prompt (Thai) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;600;700;800&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ==================== CUSTOM CSS & ROBLOX OBBY THEME ==================== */
+        :root {
+            --rbx-green: #00B06F;
+            --rbx-green-dark: #007A4D;
+            --rbx-blue: #00A2FF;
+            --rbx-blue-dark: #006FB0;
+            --rbx-gold: #F5CD30;
+            --rbx-red: #F74B52;
+            --lava-orange: #FF5500;
+            --lava-yellow: #FFAA00;
+        }
+
+        body {
+            font-family: 'Prompt', 'Inter', sans-serif;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.3s ease;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .font-game {
+            font-family: 'Fredoka', 'Inter', sans-serif;
+        }
+
+        /* ธีมท้องฟ้า: Space Night Mode vs Daylight Sky Mode */
+        body.theme-space {
+            background: radial-gradient(ellipse at top, #1B2735 0%, #090A0F 100%);
+            color: #FFFFFF;
+        }
+        body.theme-day {
+            background: linear-gradient(180deg, #38BDF8 0%, #BAE6FD 65%, #E0F2FE 100%);
+            color: #0F172A;
+        }
+
+        /* ดวงดาวระยิบระยับในโหมดกลางคืน */
+        .stars-bg {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #00A2FF, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #F5CD30, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 230px 60px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 260px 180px;
+        }
+
+        /* ปุ่ม 3D Blocky สไตล์ Roblox */
+        .btn-3d {
+            transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+        }
+        .btn-3d:hover:not(:disabled) {
+            filter: brightness(1.08);
+            transform: translateY(-2px);
+        }
+        .btn-3d:active:not(:disabled) {
+            transform: translateY(4px);
+        }
+
+        .btn-green {
+            background-color: var(--rbx-green);
+            box-shadow: 0 5px 0 var(--rbx-green-dark);
+            color: white;
+        }
+        .btn-green:active:not(:disabled) { box-shadow: 0 1px 0 var(--rbx-green-dark); }
+
+        .btn-blue {
+            background-color: var(--rbx-blue);
+            box-shadow: 0 5px 0 var(--rbx-blue-dark);
+            color: white;
+        }
+        .btn-blue:active:not(:disabled) { box-shadow: 0 1px 0 var(--rbx-blue-dark); }
+
+        .btn-gold {
+            background-color: var(--rbx-gold);
+            box-shadow: 0 5px 0 #B8930B;
+            color: #1E293B;
+        }
+        .btn-gold:active:not(:disabled) { box-shadow: 0 1px 0 #B8930B; }
+
+        .btn-red {
+            background-color: var(--rbx-red);
+            box-shadow: 0 5px 0 #A61C22;
+            color: white;
+        }
+        .btn-red:active:not(:disabled) { box-shadow: 0 1px 0 #A61C22; }
+
+        /* พื้นลาวาเรืองแสงเคลื่อนไหวได้ (Neon Lava Floor) */
+        .lava-floor {
+            background: linear-gradient(90deg, #FF3B00, #FF7700, #FFAA00, #FF5500, #FF3B00);
+            background-size: 200% 100%;
+            animation: lavaFlow 4s linear infinite;
+            box-shadow: 0 -8px 25px rgba(255, 85, 0, 0.75), inset 0 4px 10px rgba(255, 230, 0, 0.6);
+        }
+        @keyframes lavaFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* แท่นบล็อก Obby 3D (Studs Texture) */
+        .obby-studs {
+            background-image: radial-gradient(rgba(255,255,255,0.28) 22%, transparent 24%);
+            background-size: 14px 14px;
+        }
+
+        .bridge-tile {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+        }
+        .bridge-tile-empty {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed rgba(255, 255, 255, 0.35);
+            box-shadow: none;
+        }
+        body.theme-day .bridge-tile-empty {
+            background: rgba(15, 23, 42, 0.08);
+            border: 2px dashed rgba(15, 23, 42, 0.35);
+        }
+
+        /* ปุ่มตัวอักษรสุ่ม (Scrambled Letter Block) */
+        .letter-block {
+            background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
+            box-shadow: 0 5px 0 #1D4ED8, inset 0 2px 0 rgba(255,255,255,0.4);
+            color: white;
+            transition: all 0.12s ease;
+        }
+        .letter-block:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.04);
+            filter: brightness(1.1);
+        }
+        .letter-block:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #1D4ED8;
+        }
+        .letter-block:disabled {
+            opacity: 0.25;
+            transform: scale(0.92);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* อนิเมชันตัวละครกระโดดข้ามบล็อก & ตกลาวา */
+        @keyframes charJumpArc {
+            0% { transform: translateY(0) scale(1, 1); }
+            30% { transform: translateY(4px) scale(1.12, 0.88); } /* ย่อตัวก่อนโดด */
+            60% { transform: translateY(-34px) scale(0.92, 1.1) rotate(6deg); } /* ลอยกลางอากาศ */
+            100% { transform: translateY(0) scale(1, 1) rotate(0deg); }
+        }
+        .animate-char-jump {
+            animation: charJumpArc 0.32s ease-out;
+        }
+
+        @keyframes charFallLava {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            40% { transform: translateY(-15px) rotate(-15deg); }
+            100% { transform: translateY(85px) rotate(120deg) scale(0.6); opacity: 0; }
+        }
+        .animate-char-fall {
+            animation: charFallLava 0.65s ease-in forwards;
+        }
+
+        @keyframes flagWave {
+            0%, 100% { transform: skewY(0deg); }
+            50% { transform: skewY(-6deg); }
+        }
+        .animate-flag {
+            animation: flagWave 1.6s ease-in-out infinite;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            65% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .animate-bounce-in {
+            animation: bounceIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* ห้อง Escape Room Object Hover */
+        .escape-obj {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+        }
+        .escape-obj:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 12px 24px rgba(0, 162, 255, 0.3);
+        }
+        .escape-obj:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="theme-space stars-bg flex flex-col justify-between">
+
+    <!-- ==================== TOP NAVBAR ==================== -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/80 border-b border-white/10 text-white shadow-lg">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+            
+            <!-- Logo & Home Button -->
+            <button onclick="goHome()" class="flex items-center gap-2.5 text-left group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF5500] to-[#F5CD30] flex items-center justify-center shadow-md transform -rotate-3 group-hover:rotate-0 transition border-2 border-white/30">
+                    <i class="fa-solid fa-cubes text-slate-900 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-game font-bold text-xl sm:text-2xl leading-none tracking-wide">
+                        Blox<span class="text-[#00A2FF]">Obby</span>
+                    </h1>
+                    <span class="text-[11px] text-gray-300 hidden sm:inline">Word Builder & Escape Room</span>
+                </div>
+            </button>
+
+            <!-- Controls: Sky Toggle, Sound Toggle, Locker, High Score -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                
+                <!-- สลับธีมท้องฟ้า (Space / Daylight) -->
+                <button onclick="toggleSkyTheme()" id="sky-toggle-btn" title="สลับท้องฟ้า กลางวัน/อวกาศ"
+                    class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition border border-white/10">
+                    <i id="sky-icon" class="fa-solid fa-moon text-[#F5CD30]"></i>
+                    <span id="sky-label" class="hidden md:inline">Space Sky</span>
+                </button>
+
+                <!-- เปิด/ปิดเสียงสังเคราะห์ (Web Audio SFX) -->
+                <button onclick="toggleSound()" id="sound-toggle-btn" title="เปิด/ปิดเสียงเอฟเฟกต์"
+                    class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition border border-white/10">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-[#00B06F]"></i>
+                </button>
+
+                <!-- ปุ่มแต่งตัวละคร & Trails -->
+                <button onclick="openLockerModal()" class="btn-3d btn-blue px-3 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span class="hidden sm:inline">Skins & Trails</span>
+                </button>
+
+                <!-- สถิติ High Score -->
+                <div class="bg-slate-950/70 px-3 py-1.5 rounded-xl border border-[#F5CD30]/40 flex items-center gap-1.5" title="คะแนนสูงสุดสะสม">
+                    <i class="fa-solid fa-trophy text-[#F5CD30] text-sm"></i>
+                    <span id="nav-highscore" class="font-game font-bold text-[#F5CD30] text-base">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 flex flex-col justify-center">
+
+        <!-- ==================== 1. TITLE SCREEN (หน้าเลือกโหมดการเล่น) ==================== -->
+        <section id="title-screen" class="animate-bounce-in space-y-6">
+            
+            <!-- Hero Banner -->
+            <div class="bg-slate-900/85 text-white backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-3 text-center md:text-left flex-1">
+                    <div class="inline-flex items-center gap-2 bg-[#FF5500]/20 text-[#FF884D] border border-[#FF5500]/40 px-3 py-1 rounded-full text-xs font-bold">
+                        <span>🔥 FLOOR IS LAVA</span> • <span>🇬🇧 ENGLISH EDITION</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-bold leading-tight">
+                        กระโดดข้ามลาวา & <span class="text-[#00A2FF]">ไขปริศนาหาทางออก!</span>
+                    </h2>
+                    <p class="text-gray-300 text-sm sm:text-base max-w-xl leading-relaxed">
+                        ฝึกสะกดคำศัพท์ ฟังเสียงภาษาอังกฤษ และอ่านคำใบ้บุพบทบอกตำแหน่ง (Prepositions) ผ่านด่านสไตล์ <span class="text-[#00B06F] font-semibold">Roblox Obby</span> ยิ่งผ่านด่านมาก ยิ่งปลดล็อกสกินและเอฟเฟกต์แสงเดินสุดเท่!
+                    </p>
+                </div>
+
+                <!-- Preview ตัวละครพร้อม Trail ปัจจุบัน -->
+                <div class="bg-slate-950/80 p-4 rounded-2xl border border-white/10 flex flex-col items-center w-full md:w-52">
+                    <div id="lobby-avatar-preview" class="w-24 h-24 flex items-center justify-center relative">
+                        <!-- เรนเดอร์ตัวละครด้วย JS -->
+                    </div>
+                    <div id="lobby-skin-label" class="mt-2 text-xs font-bold text-[#F5CD30] bg-white/5 px-3 py-1 rounded-full">
+                        Classic Noob
+                    </div>
+                    <button onclick="openLockerModal()" class="mt-2 text-xs text-[#00A2FF] hover:underline font-semibold">
+                        เปลี่ยนสกิน / เอฟเฟกต์แสง
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2 Game Mode Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Mode 1: Obby Bridge Builder -->
+                <div class="bg-slate-900/90 text-white rounded-3xl p-6 border-2 border-white/10 hover:border-[#00B06F] transition-all shadow-xl flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-14 h-14 rounded-2xl bg-[#00B06F]/20 border border-[#00B06F]/40 flex items-center justify-center text-3xl">
+                                🌉
+                            </span>
+                            <span id="badge-obby-progress" class="bg-[#00B06F]/20 text-[#00E691] text-xs font-bold px-3 py-1 rounded-full">
+                                10 ด่าน • สะกดคำสร้างสะพาน
+                            </span>
+                        </div>
+                        <h3 class="font-game text-2xl font-bold mb-2 group-hover:text-[#00E691] transition-colors">
+                            1. Obby Bridge Builder
+                        </h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-5">
+                            เรียงบล็อกตัวอักษรภาษาอังกฤษให้ถูกต้องเพื่อสร้างสะพานข้ามบ่อลาวา! ตัวละครจะกระโดดข้ามทีละบล็อกไปแตะธง <span class="text-[#00B06F] font-semibold">Checkpoint</span> รองรับทั้งคลิกเมาส์และพิมพ์คีย์บอร์ด
+                        </p>
+                    </div>
+                    <button onclick="startObbyMode()" class="btn-3d btn-green w-full py-3.5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> เล่นโหมดสะกดคำข้ามลาวา
+                    </button>
+                </div>
+
+                <!-- Mode 2: Escape Room Clues -->
+                <div class="bg-slate-900/90 text-white rounded-3xl p-6 border-2 border-white/10 hover:border-[#00A2FF] transition-all shadow-xl flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-14 h-14 rounded-2xl bg-[#00A2FF]/20 border border-[#00A2FF]/40 flex items-center justify-center text-3xl">
+                                🔐
+                            </span>
+                            <span id="badge-escape-progress" class="bg-[#00A2FF]/20 text-[#38BDF8] text-xs font-bold px-3 py-1 rounded-full">
+                                6 ห้องปริศนา • อ่านคำใบ้หาทางออก
+                            </span>
+                        </div>
+                        <h3 class="font-game text-2xl font-bold mb-2 group-hover:text-[#38BDF8] transition-colors">
+                            2. Escape Room Clues
+                        </h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-5">
+                            ติดอยู่ในห้องลับ Roblox! อ่านและฟังคำใบ้ภาษาอังกฤษที่ใช้คำบอกตำแหน่ง (<span class="text-[#38BDF8] font-semibold">under, behind, inside, next to</span>) แล้วคลิกสำรวจวัตถุในห้องตามลำดับให้ถูกต้องเพื่อเปิดประตูหนีออกไป!
+                        </p>
+                    </div>
+                    <button onclick="startEscapeMode()" class="btn-3d btn-blue w-full py-3.5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key"></i> เล่นโหมดห้องปริศนา Escape
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== 2. MODE 1: OBBY BRIDGE BUILDER SCREEN ==================== -->
+        <section id="obby-screen" class="hidden space-y-4">
+            
+            <!-- Top HUD Bar -->
+            <div class="bg-slate-900/90 text-white p-3.5 sm:p-4 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+                <button onclick="confirmExitToMenu()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-arrow-left"></i> ออก
+                </button>
+
+                <!-- Stage Progress -->
+                <div class="flex items-center gap-3">
+                    <span class="bg-[#00B06F]/20 text-[#00E691] border border-[#00B06F]/40 px-3 py-1 rounded-xl font-game font-bold text-sm">
+                        STAGE <span id="obby-stage-num">1</span> / 10
+                    </span>
+                    <div class="bg-slate-950 px-3 py-1 rounded-xl border border-white/10 text-xs sm:text-sm font-bold">
+                        คะแนน: <span id="obby-score" class="text-[#F5CD30] font-game">0</span>
+                    </div>
+                </div>
+
+                <!-- Combo & Hearts -->
+                <div class="flex items-center gap-3">
+                    <div id="obby-combo-badge" class="bg-orange-500/20 border border-orange-400/40 px-2.5 py-1 rounded-xl text-xs font-bold text-orange-300">
+                        🔥 <span id="obby-combo">0</span>x
+                    </div>
+                    <div id="obby-hearts" class="flex items-center gap-1 text-lg">
+                        <!-- 3 Hearts rendered by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clue & Audio Box -->
+            <div class="bg-slate-900/90 text-white rounded-3xl p-5 sm:p-6 border border-white/15 shadow-xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#00A2FF] bg-[#00A2FF]/15 px-2.5 py-0.5 rounded-md">
+                                ความหมายภาษาไทย
+                            </span>
+                            <span id="obby-word-length" class="text-xs text-gray-400 font-semibold">(4 ตัวอักษร)</span>
+                        </div>
+                        <h3 id="obby-thai-meaning" class="text-2xl sm:text-3xl font-bold text-white">
+                            กระโดด (กริยาพื้นฐานใน Obby)
+                        </h3>
+                        <p id="obby-context-hint" class="text-xs sm:text-sm text-gray-300">
+                            💡 คำใบ้ใน Roblox: <span class="italic text-gray-200">"Press Spacebar to ____ over the lava!"</span>
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons: Listen & Hint -->
+                    <div class="flex sm:flex-col gap-2 flex-shrink-0">
+                        <button onclick="speakCurrentObbyWord(this)" class="btn-3d btn-blue px-4 py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-volume-high"></i> Listen (ฟังเสียง)
+                        </button>
+                        <button onclick="useObbyHint()" id="obby-hint-btn" class="btn-3d btn-gold px-4 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i> ใบ้ 1 ตัว (-10 คะแนน)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D-Styled Obby Visual Stage (Start Platform -> Letter Bridge -> Checkpoint Flag over Lava) -->
+            <div class="relative rounded-3xl overflow-hidden border-2 border-white/15 shadow-2xl bg-slate-950/60 backdrop-blur-sm pt-10 pb-14 px-3 sm:px-6">
+                
+                <!-- พื้นที่เวทีกระโดด -->
+                <div class="relative z-10 flex items-end justify-between gap-1.5 sm:gap-2.5 min-h-[155px] max-w-3xl mx-auto">
+                    
+                    <!-- แท่นเริ่มต้น (Start Platform) -->
+                    <div class="flex flex-col items-center flex-shrink-0">
+                        <div class="w-12 sm:w-16 h-12 bg-slate-700 obby-studs rounded-t-lg border-t-4 border-slate-500 shadow-lg flex items-center justify-center">
+                            <span class="text-[10px] font-game font-bold text-gray-300">START</span>
+                        </div>
+                    </div>
+
+                    <!-- สะพานบล็อกตัวอักษร (Bridge Letter Slots) -->
+                    <div id="obby-bridge-slots" class="flex-1 flex items-end justify-center gap-1.5 sm:gap-2 flex-wrap">
+                        <!-- ช่องวางตัวอักษรถูกสร้างด้วย JS -->
+                    </div>
+
+                    <!-- แท่นเส้นชัย & ธง Checkpoint (Checkpoint Platform) -->
+                    <div class="flex flex-col items-center flex-shrink-0 relative">
+                        <!-- ธง Checkpoint -->
+                        <div id="checkpoint-flag" class="mb-1 flex flex-col items-center transition-transform">
+                            <div class="flex items-start">
+                                <div class="w-1.5 h-12 bg-gray-300 rounded-full"></div>
+                                <div id="flag-cloth" class="w-8 h-6 bg-[#F74B52] rounded-r-md animate-flag flex items-center justify-center text-[10px] font-bold text-white shadow">
+                                    ★
+                                </div>
+                            </div>
+                        </div>
+                        <div id="checkpoint-pad" class="w-12 sm:w-16 h-12 bg-slate-600 obby-studs rounded-t-lg border-t-4 border-slate-400 shadow-lg flex items-center justify-center transition-colors">
+                            <span class="text-[9px] font-game font-bold text-white">GOAL</span>
+                        </div>
+                    </div>
+
+                    <!-- ตัวละคร Blocky Avatar ที่เคลื่อนที่และกระโดดข้ามสะพาน -->
+                    <div id="obby-character" class="absolute bottom-12 left-2 sm:left-4 w-12 h-14 z-20 transition-all duration-300 ease-out pointer-events-none">
+                        <!-- SVG อวตาร + Trail Effect -->
+                    </div>
+                </div>
+
+                <!-- พื้นลาวาเดือดด้านล่าง (Glowing Neon Lava) -->
+                <div class="lava-floor absolute bottom-0 left-0 right-0 h-10 z-10 flex items-center justify-around overflow-hidden">
+                    <span class="text-xs font-game font-bold text-yellow-100/80 tracking-widest animate-pulse">~ DANGER LAVA ~</span>
+                    <span class="text-xs font-game font-bold text-yellow-100/80 tracking-widest animate-pulse hidden sm:inline">~ DON'T FALL ~</span>
+                </div>
+            </div>
+
+            <!-- Scrambled Letter Blocks & Undo Control -->
+            <div class="bg-slate-900/90 text-white rounded-3xl p-5 border border-white/15 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs sm:text-sm text-gray-300 font-medium">
+                        <i class="fa-solid fa-keyboard text-[#00A2FF] mr-1"></i> คลิกบล็อกตัวอักษร หรือพิมพ์บนคีย์บอร์ด (กด Backspace เพื่อลบ)
+                    </span>
+                    <button onclick="undoLastLetter()" id="obby-undo-btn" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-delete-left"></i> ลบตัวล่าสุด
+                    </button>
+                </div>
+
+                <!-- กล่องปุ่มตัวอักษรที่สลับตำแหน่งแล้ว -->
+                <div id="obby-letter-pool" class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 min-h-[60px]">
+                    <!-- ปุ่มตัวอักษรถูกสร้างด้วย JS -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ==================== 3. MODE 2: ESCAPE ROOM CLUES SCREEN ==================== -->
+        <section id="escape-screen" class="hidden space-y-4">
+            
+            <!-- Top HUD Bar -->
+            <div class="bg-slate-900/90 text-white p-3.5 sm:p-4 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+                <button onclick="confirmExitToMenu()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-arrow-left"></i> ออก
+                </button>
+
+                <div class="flex items-center gap-3">
+                    <span class="bg-[#00A2FF]/20 text-[#38BDF8] border border-[#00A2FF]/40 px-3 py-1 rounded-xl font-game font-bold text-sm">
+                        ROOM <span id="escape-room-num">1</span> / 6
+                    </span>
+                    <span id="escape-room-title" class="font-bold text-sm sm:text-base hidden sm:inline text-gray-200">
+                        The Locked Storage
+                    </span>
+                </div>
+
+                <!-- Inventory Items Collected in Room -->
+                <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-white/10">
+                    <span class="text-xs text-gray-400">กระเป๋า:</span>
+                    <div id="escape-inventory" class="flex items-center gap-1.5 text-sm font-bold text-[#F5CD30]">
+                        <span class="text-gray-500 text-xs italic">ว่างเปล่า</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clue Panel (English Instruction + Audio + Step Tracker) -->
+            <div class="bg-slate-900/90 text-white rounded-3xl p-5 sm:p-6 border-2 border-[#00A2FF]/40 shadow-xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="space-y-2 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-[#00A2FF] text-white text-xs font-bold px-2.5 py-0.5 rounded-md">
+                                📜 CLUE / คำสั่งภารกิจ
+                            </span>
+                            <span id="escape-step-badge" class="text-xs font-bold text-[#F5CD30]">
+                                ขั้นตอนที่ 1 / 2
+                            </span>
+                        </div>
+                        <p id="escape-clue-en" class="text-lg sm:text-2xl font-bold text-white leading-snug">
+                            "Find the golden key hidden under the blue carpet, then unlock the iron door!"
+                        </p>
+                    </div>
+
+                    <button onclick="speakEscapeClue(this)" class="btn-3d btn-blue px-4 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 flex-shrink-0">
+                        <i class="fa-solid fa-volume-high"></i> ฟังเสียงคำใบ้
+                    </button>
+                </div>
+
+                <!-- แถบแจ้งสถานะการสำรวจวัตถุล่าสุด -->
+                <div id="escape-feedback-bar" class="mt-4 p-3 rounded-xl bg-slate-950/80 border border-white/10 text-sm text-gray-300 flex items-center gap-2.5">
+                    <i class="fa-solid fa-magnifying-glass text-[#00A2FF]"></i>
+                    <span id="escape-feedback-text">อ่านคำใบ้ด้านบน แล้วคลิกสำรวจวัตถุในห้องตามลำดับให้ถูกต้อง!</span>
+                </div>
+            </div>
+
+            <!-- Interactive 3D-Styled Room Canvas -->
+            <div class="bg-slate-900/85 text-white rounded-3xl p-6 border border-white/15 shadow-2xl">
+                <div class="text-xs text-gray-400 mb-4 flex items-center justify-between">
+                    <span>🏠 คลิกที่สิ่งของภายในห้องเพื่อค้นหาและโต้ตอบ:</span>
+                    <span class="text-[#00E691] font-semibold">สังเกตคำบุพบท (under, behind, inside, on, next to)</span>
+                </div>
+
+                <!-- Grid วัตถุ 6 ชิ้นในห้อง -->
+                <div id="escape-objects-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <!-- การ์ดวัตถุถูกสร้างด้วย JS -->
+                </div>
+            </div>
+
+            <!-- Post-Solve Thai Translation & Vocabulary Breakdown Modal/Card -->
+            <div id="escape-solved-card" class="hidden bg-gradient-to-r from-[#00B06F]/25 to-[#00A2FF]/25 backdrop-blur-md text-white rounded-3xl p-6 border-2 border-[#00B06F] shadow-2xl animate-bounce-in">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 text-[#00E691] font-bold text-lg">
+                            <i class="fa-solid fa-door-open text-2xl"></i>
+                            <span>ปลดล็อกประตูสำเร็จ! (Room Escaped!)</span>
+                        </div>
+                        <p class="text-sm text-gray-200">
+                            <span class="font-bold text-[#F5CD30]">คำแปลภาษาไทย:</span> <span id="escape-thai-trans"></span>
+                        </p>
+                        <div id="escape-vocab-tags" class="flex flex-wrap gap-2 pt-1">
+                            <!-- แท็กคำศัพท์สำคัญในห้องนี้ -->
+                        </div>
+                    </div>
+                    <button id="escape-next-btn" onclick="nextEscapeRoom()" class="btn-3d btn-green w-full md:w-auto px-6 py-3.5 rounded-2xl font-bold text-white whitespace-nowrap flex items-center justify-center gap-2">
+                        ไปห้องถัดไป <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ==================== 4. VICTORY & VOCABULARY REVIEW SCREEN ==================== -->
+        <section id="victory-screen" class="hidden animate-bounce-in space-y-6">
+            <div class="bg-slate-900/95 text-white rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl max-w-3xl mx-auto">
+                
+                <div class="text-center border-b border-white/10 pb-6">
+                    <div id="victory-emoji" class="text-6xl mb-3">🏆</div>
+                    <h2 id="victory-title" class="font-game text-3xl sm:text-4xl font-bold text-white mb-2">
+                        OBBY CHAMPION!
+                    </h2>
+                    <p id="victory-subtitle" class="text-gray-300 text-sm sm:text-base">
+                        ยอดเยี่ยมมาก! คุณพิชิตด่านทั้งหมดและเรียนรู้คำศัพท์ใหม่สำเร็จแล้ว
+                    </p>
+
+                    <!-- Score Summary -->
+                    <div class="mt-5 inline-flex items-center gap-6 bg-slate-950 px-6 py-3 rounded-2xl border border-[#F5CD30]/30">
+                        <div>
+                            <div class="text-xs text-gray-400">คะแนนรอบนี้</div>
+                            <div id="victory-score" class="font-game text-2xl font-bold text-[#00E691]">0</div>
+                        </div>
+                        <div class="h-8 w-px bg-white/10"></div>
+                        <div>
+                            <div class="text-xs text-gray-400">สถิติสูงสุด (High Score)</div>
+                            <div id="victory-highscore" class="font-game text-2xl font-bold text-[#F5CD30]">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vocabulary Review List -->
+                <div class="mt-6">
+                    <h3 class="font-bold text-base sm:text-lg text-[#00A2FF] mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> สรุปคำศัพท์และประโยคที่ได้เรียนรู้ (กดฟังเสียงทบทวนได้)
+                    </h3>
+                    <div id="victory-review-list" class="max-h-72 overflow-y-auto space-y-2.5 pr-1">
+                        <!-- รายการทบทวนคำศัพท์ถูกสร้างด้วย JS -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+                    <button onclick="replayLastMode()" class="btn-3d btn-green flex-1 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> เล่นโหมดนี้อีกครั้ง
+                    </button>
+                    <button onclick="openLockerModal()" class="btn-3d btn-gold flex-1 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-shirt"></i> เช็กสกินที่ปลดล็อก
+                    </button>
+                    <button onclick="goHome()" class="btn-3d btn-blue flex-1 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-house"></i> กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== MODAL: AVATAR SKINS & TRAILS LOCKER ==================== -->
+    <div id="locker-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 text-white w-full max-w-2xl rounded-3xl border border-white/15 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-bounce-in">
+            
+            <div class="p-5 bg-slate-950 border-b border-white/10 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#00A2FF]/20 text-[#00A2FF] flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-game text-xl font-bold">Avatar Skins & Obby Trails</h3>
+                        <p class="text-xs text-gray-400">ปลดล็อกสกินและเอฟเฟกต์แสงอัตโนมัติเมื่อทำคะแนนสะสมถึงเป้าหมาย!</p>
+                    </div>
+                </div>
+                <button onclick="closeLockerModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto space-y-5">
+                <!-- Preview Box -->
+                <div class="bg-slate-950/90 p-4 rounded-2xl border border-white/10 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div id="locker-avatar-preview" class="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center border border-white/10">
+                            <!-- Avatar SVG -->
+                        </div>
+                        <div>
+                            <span class="text-xs text-[#00E691] font-bold">ชุดที่กำลังใช้งาน</span>
+                            <h4 id="locker-current-name" class="text-lg font-bold">Classic Noob</h4>
+                            <p class="text-xs text-gray-400">คะแนนสูงสุดของคุณ: <span id="locker-score-display" class="text-[#F5CD30] font-bold">0</span> คะแนน</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skins Grid -->
+                <div id="locker-items-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <!-- การ์ดสกินถูกสร้างด้วย JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: CONFIRM EXIT ==================== -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 text-white w-full max-w-sm rounded-3xl p-6 border border-white/15 shadow-2xl text-center animate-bounce-in">
+            <div class="text-4xl mb-3">⚠️</div>
+            <h3 class="text-xl font-bold mb-2">ออกจากด่านปัจจุบัน?</h3>
+            <p class="text-sm text-gray-300 mb-6">ความคืบหน้าในรอบนี้จะไม่ถูกบันทึก</p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 font-bold">เล่นต่อ</button>
+                <button onclick="executeExitToMenu()" class="btn-3d btn-red flex-1 py-2.5 rounded-xl font-bold">ออกสู่หน้าหลัก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-12 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-slate-900 border-2 border-[#00B06F] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+        <span id="toast-icon" class="text-xl">✨</span>
+        <span id="toast-text" class="text-sm font-semibold">แจ้งเตือน</span>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="text-center py-3 text-xs opacity-70">
+        BloxObby: Word Builder & Escape • เรียนรู้คำศัพท์และบุพบทภาษาอังกฤษผ่านเกมสไตล์ Roblox
+    </footer>
+
+    <!-- ==================== JAVASCRIPT ENGINE ==================== -->
+    <script>
+        /* ============================================================================
+           1. DATA BANKS: 10 OBBY STAGES & 6 ESCAPE ROOMS & SKINS
+           ============================================================================ */
+        const OBBY_STAGES = [
+            {
+                word: "JUMP",
+                thai: "กระโดด",
+                context: "Press Spacebar to ____ over the glowing lava!",
+                explanation: "Jump (กริยา) แปลว่า กระโดด เป็นทักษะพื้นฐานที่สุดในการเล่นด่าน Obby"
+            },
+            {
+                word: "TRADE",
+                thai: "แลกเปลี่ยนไอเทม",
+                context: "Send a ____ request to swap pets with another player.",
+                explanation: "Trade (กริยา/นาม) แปลว่า แลกเปลี่ยนหรือค้าขายไอเทมระหว่างผู้เล่น"
+            },
+            {
+                word: "EQUIP",
+                thai: "สวมใส่ / ติดตั้ง",
+                context: "Open your bag and click ____ to hold your new sword.",
+                explanation: "Equip (กริยา) แปลว่า สวมใส่หรือติดตั้งอุปกรณ์เพื่อใช้งาน"
+            },
+            {
+                word: "PORTAL",
+                thai: "ประตูวาร์ปข้ามมิติ",
+                context: "Walk into the glowing ____ to enter the next world.",
+                explanation: "Portal (นาม) แปลว่า ประตูมิติหรือจุดวาร์ปไปยังแผนที่อื่น"
+            },
+            {
+                word: "AVATAR",
+                thai: "ตัวละครจำลองของผู้เล่น",
+                context: "Customize your ____ with cool hats, shirts, and wings.",
+                explanation: "Avatar (นาม) แปลว่า ตัวละครอวตารที่เป็นตัวแทนของผู้เล่นในเกม"
+            },
+            {
+                word: "INVENTORY",
+                thai: "กระเป๋าเก็บของ / คลังไอเทม",
+                context: "Check your ____ to see all the items you collected.",
+                explanation: "Inventory (นาม) แปลว่า คลังเก็บของหรือกระเป๋าไอเทมทั้งหมดที่มี"
+            },
+            {
+                word: "CHECKPOINT",
+                thai: "จุดเซฟความคืบหน้า",
+                context: "Touch the flag to save your ____ so you don't restart!",
+                explanation: "Checkpoint (นาม) แปลว่า จุดบันทึกตำแหน่ง หากตกเหวจะกลับมาเกิดตรงนี้"
+            },
+            {
+                word: "LEADERBOARD",
+                thai: "ตารางจัดอันดับผู้เล่น",
+                context: "Look at the ____ on the top right to see who has the most wins.",
+                explanation: "Leaderboard (นาม) แปลว่า กระดานจัดอันดับคะแนนหรือสถิติของผู้เล่นในเซิร์ฟเวอร์"
+            },
+            {
+                word: "TELEPORT",
+                thai: "เคลื่อนย้ายข้ามพื้นที่ทันที",
+                context: "Use the magic pad to ____ directly to the boss arena.",
+                explanation: "Teleport (กริยา) แปลว่า การวาร์ปหรือเคลื่อนย้ายจากจุดหนึ่งไปอีกจุดในพริบตา"
+            },
+            {
+                word: "ACHIEVEMENT",
+                thai: "ความสำเร็จ / เหรียญรางวัล",
+                context: "You beat all 10 stages and unlocked a rare ____ badge!",
+                explanation: "Achievement (นาม) แปลว่า ความสำเร็จหรือรางวัลพิเศษเมื่อทำภารกิจท้าทายสำเร็จ"
+            }
+        ];
+
+        const ESCAPE_ROOMS = [
+            {
+                roomNum: 1,
+                title: "The Cozy Lobby Room",
+                clueEn: "Find the Golden Key hidden under the Blue Carpet, then unlock the Iron Door!",
+                thaiTranslation: "จงหากุญแจสีทองที่ซ่อนอยู่ 'ใต้ (under)' พรมสีน้ำเงิน จากนั้นนำไปไข 'ประตูเหล็ก (Iron Door)'!",
+                vocabFocus: [
+                    { en: "under", th: "ข้างใต้" },
+                    { en: "Blue Carpet", th: "พรมสีน้ำเงิน" },
+                    { en: "unlock", th: "ไขกุญแจ / ปลดล็อก" }
+                ],
+                objects: [
+                    { id: "crate", name: "Wooden Crate", icon: "📦", color: "bg-amber-700/40 border-amber-500/50", desc: "ลังไม้เก่า ๆ" },
+                    { id: "carpet", name: "Blue Carpet", icon: "🟦", color: "bg-blue-600/40 border-blue-400/50", desc: "พรมสีน้ำเงินกลางห้อง" },
+                    { id: "bookshelf", name: "Bookshelf", icon: "📚", color: "bg-orange-800/40 border-orange-500/50", desc: "ชั้นวางหนังสือ" },
+                    { id: "plant", name: "Potted Plant", icon: "🪴", color: "bg-emerald-700/40 border-emerald-500/50", desc: "กระถางต้นไม้" },
+                    { id: "chest", name: "Silver Chest", icon: "🧰", color: "bg-slate-600/40 border-slate-400/50", desc: "กล่องเหล็กสีเงิน" },
+                    { id: "door", name: "Iron Door", icon: "🚪", color: "bg-zinc-700/60 border-zinc-400/60", desc: "ประตูเหล็กทางออก" }
+                ],
+                steps: [
+                    {
+                        targetId: "carpet",
+                        actionMsg: "เยี่ยมมาก! คุณเปิดใต้พรมสีน้ำเงิน (under the Blue Carpet) และพบ 'Golden Key'!",
+                        itemAwarded: "🗝️ Golden Key",
+                        wrongHints: {
+                            door: "ประตูเหล็กล็อกอยู่! ต้องหากุญแจใต้พรมสีน้ำเงิน (under the Blue Carpet) ก่อน",
+                            default: "ยังไม่เจออะไรตรงนี้ ลองมองหา 'ใต้พรมสีน้ำเงิน (under the Blue Carpet)' ดูสิ!"
+                        }
+                    },
+                    {
+                        targetId: "door",
+                        actionMsg: "คุณใช้ Golden Key ไขประตูเหล็กสำเร็จ!",
+                        itemAwarded: null,
+                        wrongHints: {
+                            default: "คุณได้กุญแจมาแล้ว! รีบไปไขที่ 'ประตูเหล็ก (Iron Door)' เพื่อออกเลย"
+                        }
+                    }
+                ]
+            },
+            {
+                roomNum: 2,
+                title: "The Wizard's Study",
+                clueEn: "Look behind the Secret Bookshelf to get the Magic Wand, then tap the Glowing Crystal!",
+                thaiTranslation: "จงมองหา 'ด้านหลัง (behind)' ชั้นหนังสือลับเพื่อหยิบไม้กายสิทธิ์ จากนั้นแตะที่ 'คริสตัลเรืองแสง (Glowing Crystal)'!",
+                vocabFocus: [
+                    { en: "behind", th: "ด้านหลัง" },
+                    { en: "Secret Bookshelf", th: "ชั้นหนังสือลับ" },
+                    { en: "Glowing Crystal", th: "คริสตัลเรืองแสง" }
+                ],
+                objects: [
+                    { id: "cauldron", name: "Potion Cauldron", icon: "🧪", color: "bg-purple-800/40 border-purple-500/50", desc: "หม้อปรุงยา" },
+                    { id: "bookshelf", name: "Secret Bookshelf", icon: "📚", color: "bg-amber-800/40 border-amber-500/50", desc: "ชั้นหนังสือลับ" },
+                    { id: "crystal", name: "Glowing Crystal", icon: "💎", color: "bg-cyan-600/40 border-cyan-400/50", desc: "คริสตัลเรืองแสง" },
+                    { id: "chair", name: "Wooden Chair", icon: "🪑", color: "bg-orange-700/40 border-orange-400/50", desc: "เก้าอี้ไม้" },
+                    { id: "window", name: "High Window", icon: "🪟", color: "bg-sky-700/40 border-sky-400/50", desc: "หน้าต่างบานสูง" },
+                    { id: "rug", name: "Red Rug", icon: "🟥", color: "bg-red-700/40 border-red-400/50", desc: "พรมสีแดง" }
+                ],
+                steps: [
+                    {
+                        targetId: "bookshelf",
+                        actionMsg: "คุณพบไม้กายสิทธิ์ซ่อนอยู่ 'ด้านหลังชั้นหนังสือลับ (behind the Secret Bookshelf)'!",
+                        itemAwarded: "🪄 Magic Wand",
+                        wrongHints: {
+                            crystal: "คริสตัลยังไม่ตอบสนอง ต้องหาไม้กายสิทธิ์ 'ด้านหลังชั้นหนังสือลับ (behind the Secret Bookshelf)' ก่อน!",
+                            default: "ไม่มีไม้กายสิทธิ์ตรงนี้ ลองสำรวจ 'ด้านหลังชั้นหนังสือลับ (behind the Secret Bookshelf)'"
+                        }
+                    },
+                    {
+                        targetId: "crystal",
+                        actionMsg: "ไม้กายสิทธิ์เปล่งแสงใส่คริสตัล เปิดประตูมิติสำเร็จ!",
+                        itemAwarded: null,
+                        wrongHints: {
+                            default: "ได้ไม้กายสิทธิ์แล้ว! นำไปแตะที่ 'คริสตัลเรืองแสง (Glowing Crystal)' เลย"
+                        }
+                    }
+                ]
+            },
+            {
+                roomNum: 3,
+                title: "The Power Generator Room",
+                clueEn: "Take the Battery inside the Wooden Crate, then pull the Red Lever next to the door!",
+                thaiTranslation: "จงหยิบแบตเตอรี่ที่อยู่ 'ข้างใน (inside)' ลังไม้ จากนั้นดึง 'คันโยกสีแดง (Red Lever)' ที่อยู่ 'ถัดจาก (next to)' ประตู!",
+                vocabFocus: [
+                    { en: "inside", th: "ข้างใน" },
+                    { en: "pull", th: "ดึง" },
+                    { en: "next to", th: "ถัดจาก / ข้างๆ" }
+                ],
+                objects: [
+                    { id: "crate", name: "Wooden Crate", icon: "📦", color: "bg-amber-700/40 border-amber-500/50", desc: "ลังไม้ปิดฝา" },
+                    { id: "barrel", name: "Oil Barrel", icon: "🛢️", color: "bg-slate-700/50 border-slate-500/50", desc: "ถังน้ำมันเหล็ก" },
+                    { id: "lever", name: "Red Lever", icon: "🕹️", color: "bg-red-600/40 border-red-400/50", desc: "คันโยกสีแดงข้างประตู" },
+                    { id: "monitor", name: "Broken Screen", icon: "🖥️", color: "bg-blue-900/40 border-blue-500/50", desc: "หน้าจอคอมพิวเตอร์" },
+                    { id: "toolbox", name: "Mechanic Toolbox", icon: "🧰", color: "bg-rose-800/40 border-rose-500/50", desc: "กล่องเครื่องมือช่าง" },
+                    { id: "pipe", name: "Steam Pipe", icon: "🔧", color: "bg-zinc-600/40 border-zinc-400/50", desc: "ท่อไอน้ำ" }
+                ],
+                steps: [
+                    {
+                        targetId: "crate",
+                        actionMsg: "คุณงัดลังไม้และหยิบ 'Power Battery' จากข้างใน (inside the Wooden Crate) ได้สำเร็จ!",
+                        itemAwarded: "🔋 Power Battery",
+                        wrongHints: {
+                            lever: "คันโยกไม่มีไฟฟ้า! ต้องหาแบตเตอรี่ 'ข้างในลังไม้ (inside the Wooden Crate)' ก่อน",
+                            default: "ไม่พบแบตเตอรี่ตรงนี้ ลองเปิดดู 'ข้างในลังไม้ (inside the Wooden Crate)'"
+                        }
+                    },
+                    {
+                        targetId: "lever",
+                        actionMsg: "ใส่แบตเตอรี่และดึงคันโยกสีแดง (pull the Red Lever) ประตูเปิดออกแล้ว!",
+                        itemAwarded: null,
+                        wrongHints: {
+                            default: "ได้แบตเตอรี่แล้ว! รีบไปดึง 'คันโยกสีแดง (Red Lever)' ข้างประตูเลย"
+                        }
+                    }
+                ]
+            },
+            {
+                roomNum: 4,
+                title: "The Pirate Captain's Cabin",
+                clueEn: "Grab the Gold Coin on the Wooden Table, then open the Treasure Chest!",
+                thaiTranslation: "จงหยิบเหรียญทองที่อยู่ 'บน (on)' โต๊ะไม้ จากนั้นนำไปเปิด 'หีบสมบัติ (Treasure Chest)'!",
+                vocabFocus: [
+                    { en: "on", th: "บน / ข้างบน" },
+                    { en: "Wooden Table", th: "โต๊ะไม้" },
+                    { en: "Treasure Chest", th: "หีบสมบัติ" }
+                ],
+                objects: [
+                    { id: "map", name: "Wall Map", icon: "🗺️", color: "bg-yellow-700/40 border-yellow-500/50", desc: "แผนที่บนผนัง" },
+                    { id: "table", name: "Wooden Table", icon: "🪵", color: "bg-amber-800/40 border-amber-500/50", desc: "โต๊ะไม้กัปตัน" },
+                    { id: "chest", name: "Treasure Chest", icon: "👑", color: "bg-yellow-600/40 border-yellow-400/50", desc: "หีบสมบัติโจรสลัด" },
+                    { id: "anchor", name: "Heavy Anchor", icon: "⚓", color: "bg-slate-700/50 border-slate-400/50", desc: "สมอเรือเหล็ก" },
+                    { id: "lamp", name: "Oil Lantern", icon: "🏮", color: "bg-orange-600/40 border-orange-400/50", desc: "ตะเกียงไฟ" },
+                    { id: "parrot", name: "Toy Parrot", icon: "🦜", color: "bg-emerald-600/40 border-emerald-400/50", desc: "หุ่นนกแก้ว" }
+                ],
+                steps: [
+                    {
+                        targetId: "table",
+                        actionMsg: "คุณหยิบ 'Gold Coin' ที่วางอยู่ 'บนโต๊ะไม้ (on the Wooden Table)' เรียบร้อย!",
+                        itemAwarded: "🪙 Gold Coin",
+                        wrongHints: {
+                            chest: "หีบสมบัติต้องการเหรียญทองหยอด! ลองหา 'บนโต๊ะไม้ (on the Wooden Table)' ก่อน",
+                            default: "ไม่มีเหรียญทองตรงนี้ ลองดูที่ 'บนโต๊ะไม้ (on the Wooden Table)'"
+                        }
+                    },
+                    {
+                        targetId: "chest",
+                        actionMsg: "หยอดเหรียญทองเปิดหีบสมบัติ พบทางลับออกจากห้องสำเร็จ!",
+                        itemAwarded: null,
+                        wrongHints: {
+                            default: "ได้เหรียญทองแล้ว! นำไปเปิด 'หีบสมบัติ (Treasure Chest)' ได้เลย"
+                        }
+                    }
+                ]
+            },
+            {
+                roomNum: 5,
+                title: "The Cyber Security Vault",
+                clueEn: "Find the Access Card between the Two Monitors, then scan it at the Laser Gate!",
+                thaiTranslation: "จงหาบัตรผ่านที่อยู่ 'ระหว่าง (between)' หน้าจอทั้งสอง จากนั้นนำไปสแกนที่ 'ประตูเลเซอร์ (Laser Gate)'!",
+                vocabFocus: [
+                    { en: "between", th: "ระหว่าง" },
+                    { en: "Two Monitors", th: "หน้าจอทั้งสอง" },
+                    { en: "Laser Gate", th: "ประตูเลเซอร์" }
+                ],
+                objects: [
+                    { id: "server", name: "Mainframe Server", icon: "🗄️", color: "bg-indigo-800/40 border-indigo-400/50", desc: "ตู้เซิร์ฟเวอร์หลัก" },
+                    { id: "monitors", name: "Two Monitors", icon: "🖥️", color: "bg-blue-700/40 border-blue-400/50", desc: "หน้าจอคู่บนโต๊ะ" },
+                    { id: "gate", name: "Laser Gate", icon: "🚨", color: "bg-rose-600/40 border-rose-400/50", desc: "ประตูเลเซอร์สีแดง" },
+                    { id: "robot", name: "Mini Drone", icon: "🤖", color: "bg-cyan-700/40 border-cyan-400/50", desc: "หุ่นยนต์โดรน" },
+                    { id: "camera", name: "Security Cam", icon: "📷", color: "bg-slate-700/50 border-slate-400/50", desc: "กล้องวงจรปิด" },
+                    { id: "safe", name: "Steel Safe", icon: "🔐", color: "bg-zinc-700/50 border-zinc-400/50", desc: "ตู้เซฟเหล็ก" }
+                ],
+                steps: [
+                    {
+                        targetId: "monitors",
+                        actionMsg: "คุณหยิบบัตรผ่านที่เสียบอยู่ 'ระหว่างหน้าจอทั้งสอง (between the Two Monitors)'!",
+                        itemAwarded: "💳 Access Card",
+                        wrongHints: {
+                            gate: "แสงเลเซอร์ขวางอยู่! ต้องหาบัตรผ่าน 'ระหว่างหน้าจอทั้งสอง (between the Two Monitors)' ก่อน",
+                            default: "ไม่พบบัตรผ่านตรงนี้ ลองหา 'ระหว่างหน้าจอทั้งสอง (between the Two Monitors)'"
+                        }
+                    },
+                    {
+                        targetId: "gate",
+                        actionMsg: "สแกนบัตรผ่านสำเร็จ! เลเซอร์ดับลงและเปิดทางออกแล้ว!",
+                        itemAwarded: null,
+                        wrongHints: {
+                            default: "ได้บัตรผ่านแล้ว! รีบนำไปสแกนที่ 'ประตูเลเซอร์ (Laser Gate)' เลย"
+                        }
+                    }
+                ]
+            },
+            {
+                roomNum: 6,
+                title: "The Final Boss Throne",
+                clueEn: "Take the Crown above the Golden Statue, place it on the Altar, and step into the Portal!",
+                thaiTranslation: "จงหยิบมงกุฎที่อยู่ 'เหนือ (above)' รูปปั้นทองคำ นำไปวางที่ 'แท่นบูชา (Altar)' แล้วเดินเข้า 'ประตูวาร์ป (Portal)'!",
+                vocabFocus: [
+                    { en: "above", th: "เหนือ / ด้านบน" },
+                    { en: "Altar", th: "แท่นบูชา" },
+                    { en: "Portal", th: "ประตูวาร์ป" }
+                ],
+                objects: [
+                    { id: "statue", name: "Golden Statue", icon: "🗿", color: "bg-yellow-600/40 border-yellow-400/50", desc: "รูปปั้นทองคำสูงใหญ่" },
+                    { id: "altar", name: "Stone Altar", icon: "🏛️", color: "bg-stone-600/50 border-stone-400/50", desc: "แท่นบูชาศิลา" },
+                    { id: "portal", name: "Victory Portal", icon: "🌀", color: "bg-purple-600/40 border-purple-400/50", desc: "ประตูวาร์ปเส้นชัย" },
+                    { id: "torch", name: "Blue Torch", icon: "🔥", color: "bg-sky-600/40 border-sky-400/50", desc: "คบเพลิงสีฟ้า" },
+                    { id: "shield", name: "Knight Shield", icon: "🛡️", color: "bg-slate-600/50 border-slate-400/50", desc: "โล่อัศวิน" },
+                    { id: "pillar", name: "Marble Pillar", icon: "🏛️", color: "bg-zinc-700/50 border-zinc-400/50", desc: "เสาหินอ่อน" }
+                ],
+                steps: [
+                    {
+                        targetId: "statue",
+                        actionMsg: "คุณปีนหยิบ 'Royal Crown' ที่อยู่ 'เหนือรูปปั้นทองคำ (above the Golden Statue)'!",
+                        itemAwarded: "👑 Royal Crown",
+                        wrongHints: {
+                            default: "ขั้นตอนแรก: ให้ไปหยิบมงกุฎที่อยู่ 'เหนือรูปปั้นทองคำ (above the Golden Statue)' ก่อน!"
+                        }
+                    },
+                    {
+                        targetId: "altar",
+                        actionMsg: "คุณวางมงกุฎลงบน 'แท่นบูชา (Stone Altar)' ประตูวาร์ปทำงานแล้ว!",
+                        itemAwarded: "✨ Active Portal Key",
+                        wrongHints: {
+                            portal: "ประตูวาร์ปยังไม่เปิด! ต้องนำมงกุฎไปวางที่ 'แท่นบูชา (Stone Altar)' ก่อน",
+                            default: "ได้มงกุฎแล้ว! ให้นำไปวางที่ 'แท่นบูชา (Stone Altar)'"
+                        }
+                    },
+                    {
+                        targetId: "portal",
+                        actionMsg: "คุณก้าวเข้าสู่ประตูวาร์ปเส้นชัย ผ่านครบทั้ง 6 ห้องปริศนาแล้ว!",
+                        itemAwarded: null,
+                        wrongHints: {
+                            default: "ประตูวาร์ปเปิดแล้ว! คลิกที่ 'Victory Portal' เพื่อหลบหนีออกจากห้อง!"
+                        }
+                    }
+                ]
+            }
+        ];
+
+        const LOCKER_SKINS = [
+            {
+                id: "classic",
+                name: "Classic Noob",
+                unlockScore: 0,
+                trailColor: "transparent",
+                desc: "สกินเริ่มต้นสุดคลาสสิกของชาว Roblox"
+            },
+            {
+                id: "neon_blue",
+                name: "Neon Cyber + Blue Trail",
+                unlockScore: 100,
+                trailColor: "#00A2FF",
+                desc: "ชุดไซเบอร์เรืองแสงพร้อมออร่าสีฟ้านีออน (ปลดล็อกที่ 100 คะแนน)"
+            },
+            {
+                id: "rainbow",
+                name: "Rainbow Obby Pro",
+                unlockScore: 250,
+                trailColor: "#EC4899",
+                desc: "ชุดสายรุ้งสุดจี๊ดสำหรับเซียนกระโดดข้ามลาวา (ปลดล็อกที่ 250 คะแนน)"
+            },
+            {
+                id: "golden_king",
+                name: "Golden Crown Legend",
+                unlockScore: 450,
+                trailColor: "#F5CD30",
+                desc: "ชุดเกราะทองคำและมงกุฎราชาแห่ง BloxObby (ปลดล็อกที่ 450 คะแนน)"
+            }
+        ];
+
+        /* ============================================================================
+           2. SAVE DATA & SETTINGS (LOCALSTORAGE)
+           ============================================================================ */
+        let saveData = {
+            highScore: 0,
+            obbyBestStage: 0,
+            escapeBestRoom: 0,
+            equippedSkin: "classic",
+            skyTheme: "space", // 'space' or 'day'
+            soundEnabled: true
+        };
+
+        function loadSaveData() {
+            try {
+                const raw = localStorage.getItem("bloxobby_save_v1");
+                if (raw) {
+                    saveData = { ...saveData, ...JSON.parse(raw) };
+                }
+            } catch (e) {
+                console.warn("Storage load error:", e);
+            }
+            applySkyTheme();
+            updateSoundIcon();
+            updateGlobalUI();
+        }
+
+        function persistSaveData() {
+            try {
+                localStorage.setItem("bloxobby_save_v1", JSON.stringify(saveData));
+            } catch (e) {
+                console.warn("Storage save error:", e);
+            }
+            updateGlobalUI();
+        }
+
+        function updateGlobalUI() {
+            document.getElementById("nav-highscore").textContent = saveData.highScore;
+            document.getElementById("locker-score-display").textContent = saveData.highScore;
+
+            const currentSkin = LOCKER_SKINS.find(s => s.id === saveData.equippedSkin) || LOCKER_SKINS[0];
+            document.getElementById("lobby-skin-label").textContent = currentSkin.name;
+            document.getElementById("locker-current-name").textContent = currentSkin.name;
+
+            const avatarSVG = renderBlockyAvatarSVG(saveData.equippedSkin);
+            document.getElementById("lobby-avatar-preview").innerHTML = avatarSVG;
+            document.getElementById("locker-avatar-preview").innerHTML = avatarSVG;
+            document.getElementById("obby-character").innerHTML = avatarSVG;
+
+            if (saveData.obbyBestStage > 0) {
+                document.getElementById("badge-obby-progress").textContent = `สถิติสูงสุด: ด่าน ${saveData.obbyBestStage}/10`;
+            }
+            if (saveData.escapeBestRoom > 0) {
+                document.getElementById("badge-escape-progress").textContent = `สถิติสูงสุด: ห้อง ${saveData.escapeBestRoom}/6`;
+            }
+        }
+
+        /* ============================================================================
+           3. WEB AUDIO API SYNTHESIZER (SOUND EFFECTS WITHOUT EXTERNAL FILES)
+           ============================================================================ */
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) audioCtx = new AudioContextClass();
+            }
+            if (audioCtx && audioCtx.state === "suspended") {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSFX(type) {
+            if (!saveData.soundEnabled) return;
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            if (type === "snap") {
+                // เสียงวางบล็อกตัวอักษร (Pop/Snap)
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(640, now + 0.09);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === "jump") {
+                // เสียงตัวละครกระโดดสไตล์ Roblox
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(520, now + 0.18);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === "checkpoint") {
+                // เสียงผ่านด่าน Checkpoint (Arpeggio 3 โน้ต)
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const o = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    o.type = "triangle";
+                    o.connect(g);
+                    g.connect(ctx.destination);
+                    o.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    g.gain.setValueAtTime(0.22, now + idx * 0.08);
+                    g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.25);
+                    o.start(now + idx * 0.08);
+                    o.stop(now + idx * 0.08 + 0.25);
+                });
+            } else if (type === "lava") {
+                // เสียงตกลาวา / ตอบผิด (Oof / Descending Sawtooth)
+                osc.type = "sawtooth";
+                osc.frequency.setValueAtTime(240, now);
+                osc.frequency.linearRampToValueAtTime(75, now + 0.35);
+                gain.gain.setValueAtTime(0.28, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+                osc.start(now);
+                osc.stop(now + 0.38);
+            } else if (type === "undo") {
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(380, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+                osc.start(now);
+                osc.stop(now + 0.09);
+            }
+        }
+
+        function toggleSound() {
+            saveData.soundEnabled = !saveData.soundEnabled;
+            persistSaveData();
+            updateSoundIcon();
+            if (saveData.soundEnabled) playSFX("snap");
+        }
+
+        function updateSoundIcon() {
+            const icon = document.getElementById("sound-icon");
+            if (saveData.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-[#00B06F]";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-gray-400";
+            }
+        }
+
+        /* ============================================================================
+           4. WEB SPEECH API (ENGLISH PRONUNCIATION)
+           ============================================================================ */
+        function speakEnglish(text, btnEl = null) {
+            if (!('speechSynthesis' in window)) {
+                showToast("เบราว์เซอร์นี้ไม่รองรับเสียงอ่านอัตโนมัติ", "warning");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = "en-US";
+            utter.rate = 0.9;
+
+            if (btnEl) {
+                btnEl.classList.add("ring-4", "ring-[#00A2FF]/50", "scale-105");
+                utter.onend = () => btnEl.classList.remove("ring-4", "ring-[#00A2FF]/50", "scale-105");
+                utter.onerror = () => btnEl.classList.remove("ring-4", "ring-[#00A2FF]/50", "scale-105");
+            }
+            window.speechSynthesis.speak(utter);
+        }
+
+        /* ============================================================================
+           5. SKY THEME & BLOCKY AVATAR RENDERER
+           ============================================================================ */
+        function toggleSkyTheme() {
+            saveData.skyTheme = saveData.skyTheme === "space" ? "day" : "space";
+            persistSaveData();
+            applySkyTheme();
+        }
+
+        function applySkyTheme() {
+            const body = document.body;
+            const icon = document.getElementById("sky-icon");
+            const label = document.getElementById("sky-label");
+
+            if (saveData.skyTheme === "day") {
+                body.classList.remove("theme-space", "stars-bg");
+                body.classList.add("theme-day");
+                icon.className = "fa-solid fa-sun text-amber-400";
+                label.textContent = "Daylight Sky";
+            } else {
+                body.classList.remove("theme-day");
+                body.classList.add("theme-space", "stars-bg");
+                icon.className = "fa-solid fa-moon text-[#F5CD30]";
+                label.textContent = "Space Sky";
+            }
+        }
+
+        function renderBlockyAvatarSVG(skinId) {
+            let headColor = "#F5CD30";
+            let torsoColor = "#00A2FF";
+            let legColor = "#00B06F";
+            let accessory = "";
+            let auraGlow = "";
+
+            if (skinId === "neon_blue") {
+                headColor = "#38BDF8";
+                torsoColor = "#1E293B";
+                legColor = "#0284C7";
+                auraGlow = `<circle cx="50" cy="55" r="42" fill="rgba(0,162,255,0.22)" />`;
+                accessory = `<rect x="26" y="34" width="48" height="10" rx="3" fill="#00A2FF" stroke="#FFFFFF" stroke-width="1.5"/>`;
+            } else if (skinId === "rainbow") {
+                headColor = "#F472B6";
+                torsoColor = "#8B5CF6";
+                legColor = "#10B981";
+                auraGlow = `<circle cx="50" cy="55" r="42" fill="rgba(236,72,153,0.22)" />`;
+                accessory = `<path d="M 28 26 Q 50 6 72 26" fill="none" stroke="#F5CD30" stroke-width="5" stroke-linecap="round"/>`;
+            } else if (skinId === "golden_king") {
+                headColor = "#FDE047";
+                torsoColor = "#D97706";
+                legColor = "#B45309";
+                auraGlow = `<circle cx="50" cy="55" r="44" fill="rgba(245,205,48,0.28)" />`;
+                accessory = `<polygon points="30,24 30,10 40,18 50,7 60,18 70,10 70,24" fill="#F5CD30" stroke="#78350F" stroke-width="2"/>`;
+            }
+
+            return `
+                <svg viewBox="0 0 100 110" class="w-full h-full drop-shadow-lg overflow-visible">
+                    ${auraGlow}
+                    <!-- ขาซ้าย-ขวา -->
+                    <rect x="30" y="78" width="17" height="24" rx="4" fill="${legColor}" stroke="#0F172A" stroke-width="2"/>
+                    <rect x="53" y="78" width="17" height="24" rx="4" fill="${legColor}" stroke="#0F172A" stroke-width="2"/>
+                    <!-- ลำตัว -->
+                    <rect x="26" y="50" width="48" height="30" rx="5" fill="${torsoColor}" stroke="#0F172A" stroke-width="2"/>
+                    <!-- แขนซ้าย-ขวา -->
+                    <rect x="13" y="52" width="11" height="25" rx="4" fill="${headColor}" stroke="#0F172A" stroke-width="2"/>
+                    <rect x="76" y="52" width="11" height="25" rx="4" fill="${headColor}" stroke="#0F172A" stroke-width="2"/>
+                    <!-- หัวบล็อก -->
+                    <rect x="29" y="20" width="42" height="32" rx="7" fill="${headColor}" stroke="#0F172A" stroke-width="2"/>
+                    <!-- ตาและรอยยิ้ม -->
+                    <circle cx="42" cy="34" r="3" fill="#0F172A"/>
+                    <circle cx="58" cy="34" r="3" fill="#0F172A"/>
+                    <path d="M 42 42 Q 50 48 58 42" fill="none" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+                    ${accessory}
+                </svg>
+            `;
+        }
+
+        /* ============================================================================
+           6. MODE 1: OBBY BRIDGE BUILDER ENGINE
+           ============================================================================ */
+        let obbyState = {
+            stageIndex: 0,
+            score: 0,
+            hearts: 3,
+            combo: 0,
+            targetWord: "",
+            placedLetters: [], // เก็บ { char, poolIndex }
+            scrambledPool: [], // เก็บ { char, used }
+            isTransitioning: false,
+            learnedWords: []
+        };
+
+        let lastPlayedMode = "obby";
+
+        function startObbyMode() {
+            lastPlayedMode = "obby";
+            obbyState = {
+                stageIndex: 0,
+                score: 0,
+                hearts: 3,
+                combo: 0,
+                targetWord: "",
+                placedLetters: [],
+                scrambledPool: [],
+                isTransitioning: false,
+                learnedWords: []
+            };
+
+            showScreen("obby-screen");
+            loadObbyStage();
+        }
+
+        function loadObbyStage() {
+            const stage = OBBY_STAGES[obbyState.stageIndex];
+            obbyState.targetWord = stage.word.toUpperCase();
+            obbyState.placedLetters = [];
+            obbyState.isTransitioning = false;
+
+            // สลับตัวอักษรในคำศัพท์ (รับประกันว่าไม่เรียงเหมือนคำตอบเดิม)
+            let chars = obbyState.targetWord.split("");
+            let shuffled = [...chars];
+            do {
+                shuffled.sort(() => Math.random() - 0.5);
+            } while (shuffled.join("") === obbyState.targetWord && chars.length > 1);
+
+            obbyState.scrambledPool = shuffled.map(c => ({ char: c, used: false }));
+
+            // อัปเดต UI ข้อความคำใบ้
+            document.getElementById("obby-stage-num").textContent = obbyState.stageIndex + 1;
+            document.getElementById("obby-score").textContent = obbyState.score;
+            document.getElementById("obby-combo").textContent = obbyState.combo;
+            document.getElementById("obby-word-length").textContent = `(${obbyState.targetWord.length} ตัวอักษร)`;
+            document.getElementById("obby-thai-meaning").textContent = stage.thai;
+            document.getElementById("obby-context-hint").innerHTML = `💡 คำใบ้ใน Roblox: <span class="italic text-gray-200">"${stage.context}"</span>`;
+
+            // รีเซ็ตธง Checkpoint
+            const flagCloth = document.getElementById("flag-cloth");
+            const checkpointPad = document.getElementById("checkpoint-pad");
+            flagCloth.className = "w-8 h-6 bg-[#F74B52] rounded-r-md animate-flag flex items-center justify-center text-[10px] font-bold text-white shadow";
+            checkpointPad.className = "w-12 sm:w-16 h-12 bg-slate-600 obby-studs rounded-t-lg border-t-4 border-slate-400 shadow-lg flex items-center justify-center transition-colors";
+
+            renderObbyHearts();
+            renderObbyBridgeAndPool();
+            resetCharacterPosition();
+        }
+
+        function renderObbyHearts() {
+            const container = document.getElementById("obby-hearts");
+            let html = "";
+            for (let i = 0; i < 3; i++) {
+                html += i < obbyState.hearts
+                    ? `<i class="fa-solid fa-heart text-[#F74B52]"></i>`
+                    : `<i class="fa-solid fa-heart text-gray-600"></i>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function renderObbyBridgeAndPool() {
+            const slotsContainer = document.getElementById("obby-bridge-slots");
+            const poolContainer = document.getElementById("obby-letter-pool");
+            slotsContainer.innerHTML = "";
+            poolContainer.innerHTML = "";
+
+            const len = obbyState.targetWord.length;
+            // ปรับขนาดบล็อกให้พอดีกับความยาวคำบนมือถือ
+            const tileSizeClass = len >= 10
+                ? "w-8 h-10 sm:w-11 sm:h-12 text-base sm:text-xl"
+                : len >= 7
+                ? "w-9 h-11 sm:w-12 sm:h-12 text-lg sm:text-2xl"
+                : "w-11 h-12 sm:w-14 sm:h-14 text-xl sm:text-2xl";
+
+            // 1. วาดสะพานบล็อกตัวอักษรเหนือลาวา
+            for (let i = 0; i < len; i++) {
+                const placed = obbyState.placedLetters[i];
+                const tile = document.createElement("div");
+                if (placed) {
+                    tile.className = `${tileSizeClass} bridge-tile obby-studs bg-gradient-to-b from-[#00B06F] to-[#008A56] border-t-4 border-[#4ADE80] rounded-xl flex items-center justify-center font-game font-bold text-white cursor-pointer`;
+                    tile.textContent = placed.char;
+                    tile.title = "คลิกเพื่อเอาตัวอักษรนี้ออก";
+                    // ถ้าคลิกตัวสุดท้ายที่วาง สามารถเอาออกได้
+                    if (i === obbyState.placedLetters.length - 1 && !obbyState.isTransitioning) {
+                        tile.onclick = () => undoLastLetter();
+                    }
+                } else {
+                    tile.className = `${tileSizeClass} bridge-tile-empty rounded-xl flex items-center justify-center font-game font-bold text-white/30`;
+                    tile.textContent = "_";
+                }
+                slotsContainer.appendChild(tile);
+            }
+
+            // 2. วาดปุ่มตัวอักษรสุ่มด้านล่าง
+            obbyState.scrambledPool.forEach((item, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "letter-block obby-studs w-12 h-12 sm:w-14 sm:h-14 rounded-2xl font-game font-bold text-xl sm:text-2xl flex items-center justify-center";
+                btn.textContent = item.char;
+                btn.disabled = item.used || obbyState.isTransitioning;
+                btn.onclick = () => selectLetterFromPool(idx);
+                poolContainer.appendChild(btn);
+            });
+        }
+
+        function resetCharacterPosition() {
+            const charEl = document.getElementById("obby-character");
+            charEl.classList.remove("animate-char-fall", "animate-char-jump");
+            charEl.style.opacity = "1";
+            charEl.style.left = "1rem";
+            charEl.style.bottom = "3rem";
+        }
+
+        function moveCharacterToProgress(stepCount) {
+            const charEl = document.getElementById("obby-character");
+            const totalSteps = obbyState.targetWord.length + 1;
+            // คำนวณตำแหน่ง % จากซ้ายไปขวา (จากแท่น Start ไปยัง Goal)
+            const percent = Math.min(86, 4 + (stepCount / totalSteps) * 82);
+            charEl.style.left = `${percent}%`;
+
+            // เล่นอนิเมชันกระโดด
+            charEl.classList.remove("animate-char-jump");
+            void charEl.offsetWidth; // trigger reflow
+            charEl.classList.add("animate-char-jump");
+        }
+
+        function selectLetterFromPool(poolIndex) {
+            if (obbyState.isTransitioning) return;
+            const item = obbyState.scrambledPool[poolIndex];
+            if (!item || item.used) return;
+
+            item.used = true;
+            obbyState.placedLetters.push({ char: item.char, poolIndex });
+            playSFX("snap");
+
+            renderObbyBridgeAndPool();
+            moveCharacterToProgress(obbyState.placedLetters.length);
+
+            // ตรวจสอบเมื่อวางตัวอักษรครบทุกช่องแล้ว
+            if (obbyState.placedLetters.length === obbyState.targetWord.length) {
+                checkCompletedWord();
+            }
+        }
+
+        function undoLastLetter() {
+            if (obbyState.isTransitioning || obbyState.placedLetters.length === 0) return;
+            const last = obbyState.placedLetters.pop();
+            obbyState.scrambledPool[last.poolIndex].used = false;
+            playSFX("undo");
+
+            renderObbyBridgeAndPool();
+            moveCharacterToProgress(obbyState.placedLetters.length);
+        }
+
+        function useObbyHint() {
+            if (obbyState.isTransitioning) return;
+            const nextPos = obbyState.placedLetters.length;
+            if (nextPos >= obbyState.targetWord.length) return;
+
+            // ตรวจสอบว่าตัวอักษรที่วางไปแล้วก่อนหน้าตรงกับคำตอบหรือไม่ ถ้ามีตัวผิดให้ล้างตัวที่ผิดออกก่อน
+            for (let i = 0; i < obbyState.placedLetters.length; i++) {
+                if (obbyState.placedLetters[i].char !== obbyState.targetWord[i]) {
+                    // คืนค่าตัวอักษรที่ผิดกลับเข้ากอง
+                    while (obbyState.placedLetters.length > i) {
+                        const removed = obbyState.placedLetters.pop();
+                        obbyState.scrambledPool[removed.poolIndex].used = false;
+                    }
+                    break;
+                }
+            }
+
+            const neededChar = obbyState.targetWord[obbyState.placedLetters.length];
+            const foundIdx = obbyState.scrambledPool.findIndex(p => !p.used && p.char === neededChar);
+
+            if (foundIdx !== -1) {
+                obbyState.score = Math.max(0, obbyState.score - 10);
+                document.getElementById("obby-score").textContent = obbyState.score;
+                showToast(`ใช้คำใบ้: เติมตัวอักษร "${neededChar}" (-10 คะแนน)`, "info");
+                selectLetterFromPool(foundIdx);
+            }
+        }
+
+        function checkCompletedWord() {
+            obbyState.isTransitioning = true;
+            const spelled = obbyState.placedLetters.map(p => p.char).join("");
+            const currentStageObj = OBBY_STAGES[obbyState.stageIndex];
+
+            if (spelled === obbyState.targetWord) {
+                // สะกดถูกต้อง! ตัวละครกระโดดเข้าเส้นชัย Checkpoint
+                obbyState.combo++;
+                const stagePoints = 50 + (obbyState.combo * 10);
+                obbyState.score += stagePoints;
+                document.getElementById("obby-score").textContent = obbyState.score;
+                document.getElementById("obby-combo").textContent = obbyState.combo;
+
+                // บันทึกคำศัพท์ที่เรียนรู้แล้ว
+                if (!obbyState.learnedWords.some(w => w.en === currentStageObj.word)) {
+                    obbyState.learnedWords.push({
+                        en: currentStageObj.word,
+                        th: `${currentStageObj.thai} — ${currentStageObj.explanation}`
+                    });
+                }
+
+                // อัปเดตสถิติ High Score & Best Stage
+                if (obbyState.stageIndex + 1 > saveData.obbyBestStage) {
+                    saveData.obbyBestStage = obbyState.stageIndex + 1;
+                }
+                if (obbyState.score > saveData.highScore) {
+                    saveData.highScore = obbyState.score;
+                }
+                persistSaveData();
+
+                // เปลี่ยนธง Checkpoint เป็นสีเขียว + เล่นเสียงชนะ
+                playSFX("jump");
+                moveCharacterToProgress(obbyState.targetWord.length + 1);
+
+                setTimeout(() => {
+                    playSFX("checkpoint");
+                    speakEnglish(currentStageObj.word);
+                    document.getElementById("flag-cloth").className = "w-8 h-6 bg-[#00B06F] rounded-r-md animate-flag flex items-center justify-center text-[10px] font-bold text-white shadow";
+                    document.getElementById("checkpoint-pad").className = "w-12 sm:w-16 h-12 bg-[#00B06F] obby-studs rounded-t-lg border-t-4 border-[#4ADE80] shadow-lg flex items-center justify-center transition-colors";
+                    showToast(`Checkpoint Reached! +${stagePoints} คะแนน`, "success");
+                }, 320);
+
+                // ไปด่านถัดไป หรือหน้า Victory
+                setTimeout(() => {
+                    if (obbyState.stageIndex < OBBY_STAGES.length - 1) {
+                        obbyState.stageIndex++;
+                        loadObbyStage();
+                    } else {
+                        showVictoryScreen(
+                            "OBBY MASTER!",
+                            "สุดยอด! คุณสร้างสะพานข้ามลาวาครบทั้ง 10 ด่านสำเร็จแล้ว!",
+                            obbyState.score,
+                            obbyState.learnedWords
+                        );
+                    }
+                }, 1450);
+
+            } else {
+                // สะกดผิด! สะพานพังและตัวละครร่วงลงบ่อลาวา
+                playSFX("lava");
+                obbyState.combo = 0;
+                obbyState.hearts--;
+                document.getElementById("obby-combo").textContent = 0;
+                renderObbyHearts();
+
+                const charEl = document.getElementById("obby-character");
+                charEl.classList.add("animate-char-fall");
+                showToast(`สะกดผิด ("${spelled}") สะพานถล่มตกลาวา! เสียหัวใจ 1 ดวง`, "error");
+
+                setTimeout(() => {
+                    if (obbyState.hearts <= 0) {
+                        showVictoryScreen(
+                            "OOF! FELL IN LAVA!",
+                            "พลังชีวิตหมดแล้ว แต่คุณยังสามารถทบทวนคำศัพท์ที่เล่นผ่านมาได้ด้านล่าง!",
+                            obbyState.score,
+                            obbyState.learnedWords,
+                            "💀"
+                        );
+                    } else {
+                        // รีเซ็ตบล็อกในด่านเดิมให้ลองใหม่
+                        obbyState.placedLetters = [];
+                        obbyState.scrambledPool.forEach(p => p.used = false);
+                        obbyState.isTransitioning = false;
+                        renderObbyBridgeAndPool();
+                        resetCharacterPosition();
+                    }
+                }, 1100);
+            }
+        }
+
+        function speakCurrentObbyWord(btn) {
+            const stage = OBBY_STAGES[obbyState.stageIndex];
+            if (stage) speakEnglish(stage.word, btn);
+        }
+
+        // รองรับการพิมพ์ผ่านคีย์บอร์ดจริงในโหมด Obby Bridge Builder
+        document.addEventListener("keydown", (e) => {
+            const obbyScreen = document.getElementById("obby-screen");
+            if (obbyScreen.classList.contains("hidden") || obbyState.isTransitioning) return;
+
+            if (e.key === "Backspace") {
+                e.preventDefault();
+                undoLastLetter();
+            } else if (/^[a-zA-Z]$/.test(e.key)) {
+                const pressed = e.key.toUpperCase();
+                const matchIndex = obbyState.scrambledPool.findIndex(item => !item.used && item.char === pressed);
+                if (matchIndex !== -1) {
+                    selectLetterFromPool(matchIndex);
+                }
+            }
+        });
+
+        /* ============================================================================
+           7. MODE 2: ESCAPE ROOM CLUES ENGINE
+           ============================================================================ */
+        let escapeState = {
+            roomIndex: 0,
+            stepIndex: 0,
+            score: 0,
+            inventory: [],
+            isRoomSolved: false,
+            learnedClues: []
+        };
+
+        function startEscapeMode() {
+            lastPlayedMode = "escape";
+            escapeState = {
+                roomIndex: 0,
+                stepIndex: 0,
+                score: 0,
+                inventory: [],
+                isRoomSolved: false,
+                learnedClues: []
+            };
+
+            showScreen("escape-screen");
+            loadEscapeRoom();
+        }
+
+        function loadEscapeRoom() {
+            const room = ESCAPE_ROOMS[escapeState.roomIndex];
+            escapeState.stepIndex = 0;
+            escapeState.inventory = [];
+            escapeState.isRoomSolved = false;
+
+            document.getElementById("escape-room-num").textContent = room.roomNum;
+            document.getElementById("escape-room-title").textContent = room.title;
+            document.getElementById("escape-clue-en").textContent = `"${room.clueEn}"`;
+            document.getElementById("escape-step-badge").textContent = `ขั้นตอนที่ 1 / ${room.steps.length}`;
+            document.getElementById("escape-solved-card").classList.add("hidden");
+
+            const feedbackBar = document.getElementById("escape-feedback-bar");
+            feedbackBar.className = "mt-4 p-3 rounded-xl bg-slate-950/80 border border-white/10 text-sm text-gray-300 flex items-center gap-2.5";
+            document.getElementById("escape-feedback-text").textContent = "อ่านคำใบ้ภาษาอังกฤษด้านบน แล้วคลิกสำรวจสิ่งของในห้องตามลำดับ!";
+
+            renderEscapeInventory();
+            renderEscapeObjects();
+        }
+
+        function renderEscapeInventory() {
+            const invEl = document.getElementById("escape-inventory");
+            if (escapeState.inventory.length === 0) {
+                invEl.innerHTML = `<span class="text-gray-500 text-xs italic">ว่างเปล่า</span>`;
+            } else {
+                invEl.innerHTML = escapeState.inventory.map(item =>
+                    `<span class="bg-[#F5CD30]/20 border border-[#F5CD30]/40 px-2 py-0.5 rounded-lg text-xs">${item}</span>`
+                ).join("");
+            }
+        }
+
+        function renderEscapeObjects() {
+            const room = ESCAPE_ROOMS[escapeState.roomIndex];
+            const grid = document.getElementById("escape-objects-grid");
+            grid.innerHTML = "";
+
+            room.objects.forEach(obj => {
+                const card = document.createElement("button");
+                card.className = `escape-obj ${obj.color} border-2 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center text-center gap-2 shadow-lg`;
+                card.innerHTML = `
+                    <span class="text-4xl sm:text-5xl drop-shadow">${obj.icon}</span>
+                    <div>
+                        <div class="font-game font-bold text-base sm:text-lg text-white">${obj.name}</div>
+                        <div class="text-xs text-gray-300">${obj.desc}</div>
+                    </div>
+                `;
+                card.onclick = () => handleEscapeObjectClick(obj.id);
+                grid.appendChild(card);
+            });
+        }
+
+        function handleEscapeObjectClick(objectId) {
+            if (escapeState.isRoomSolved) return;
+
+            const room = ESCAPE_ROOMS[escapeState.roomIndex];
+            const currentStep = room.steps[escapeState.stepIndex];
+            const feedbackBar = document.getElementById("escape-feedback-bar");
+            const feedbackText = document.getElementById("escape-feedback-text");
+
+            if (objectId === currentStep.targetId) {
+                // คลิกถูกวัตถุตามลำดับในคำใบ้!
+                playSFX("snap");
+                if (currentStep.itemAwarded) {
+                    escapeState.inventory.push(currentStep.itemAwarded);
+                    renderEscapeInventory();
+                }
+
+                feedbackBar.className = "mt-4 p-3 rounded-xl bg-[#00B06F]/20 border border-[#00B06F] text-sm text-[#00E691] font-semibold flex items-center gap-2.5";
+                feedbackText.textContent = currentStep.actionMsg;
+
+                escapeState.stepIndex++;
+
+                if (escapeState.stepIndex >= room.steps.length) {
+                    // ผ่านห้องนี้แล้ว!
+                    escapeState.isRoomSolved = true;
+                    escapeState.score += 100;
+                    playSFX("checkpoint");
+
+                    if (escapeState.roomIndex + 1 > saveData.escapeBestRoom) {
+                        saveData.escapeBestRoom = escapeState.roomIndex + 1;
+                    }
+                    if (escapeState.score > saveData.highScore) {
+                        saveData.highScore = escapeState.score;
+                    }
+                    persistSaveData();
+
+                    escapeState.learnedClues.push({
+                        en: room.clueEn,
+                        th: room.thaiTranslation
+                    });
+
+                    // แสดงคำแปลภาษาไทยและคำศัพท์สำคัญหลังแก้ปริศนาสำเร็จ
+                    document.getElementById("escape-thai-trans").textContent = room.thaiTranslation;
+                    const tagsEl = document.getElementById("escape-vocab-tags");
+                    tagsEl.innerHTML = room.vocabFocus.map(v =>
+                        `<span class="bg-slate-950/80 border border-white/15 px-3 py-1 rounded-xl text-xs">
+                            <strong class="text-[#38BDF8]">${v.en}</strong> = ${v.th}
+                        </span>`
+                    ).join("");
+
+                    const nextBtn = document.getElementById("escape-next-btn");
+                    nextBtn.innerHTML = escapeState.roomIndex < ESCAPE_ROOMS.length - 1
+                        ? `ไปห้องถัดไป <i class="fa-solid fa-arrow-right"></i>`
+                        : `ดูสรุปการหลบหนี <i class="fa-solid fa-trophy"></i>`;
+
+                    document.getElementById("escape-solved-card").classList.remove("hidden");
+                } else {
+                    document.getElementById("escape-step-badge").textContent = `ขั้นตอนที่ ${escapeState.stepIndex + 1} / ${room.steps.length}`;
+                }
+
+            } else {
+                // คลิกผิดวัตถุ แสดงคำแนะนำภาษาไทย
+                playSFX("lava");
+                const hintMsg = currentStep.wrongHints[objectId] || currentStep.wrongHints.default;
+                feedbackBar.className = "mt-4 p-3 rounded-xl bg-[#F74B52]/20 border border-[#F74B52] text-sm text-[#FF8A90] font-medium flex items-center gap-2.5";
+                feedbackText.textContent = `❌ ${hintMsg}`;
+            }
+        }
+
+        function nextEscapeRoom() {
+            if (escapeState.roomIndex < ESCAPE_ROOMS.length - 1) {
+                escapeState.roomIndex++;
+                loadEscapeRoom();
+            } else {
+                showVictoryScreen(
+                    "ESCAPE MASTER!",
+                    "ยอดเยี่ยมมาก! คุณอ่านคำใบ้ภาษาอังกฤษและไขปริศนาหนีออกจากครบทั้ง 6 ห้องสำเร็จแล้ว!",
+                    escapeState.score,
+                    escapeState.learnedClues,
+                    "🗝️"
+                );
+            }
+        }
+
+        function speakEscapeClue(btn) {
+            const room = ESCAPE_ROOMS[escapeState.roomIndex];
+            if (room) speakEnglish(room.clueEn, btn);
+        }
+
+        /* ============================================================================
+           8. VICTORY SCREEN & LOCKER MODAL
+           ============================================================================ */
+        function showVictoryScreen(title, subtitle, score, reviewItems, emoji = "🏆") {
+            showScreen("victory-screen");
+            document.getElementById("victory-emoji").textContent = emoji;
+            document.getElementById("victory-title").textContent = title;
+            document.getElementById("victory-subtitle").textContent = subtitle;
+            document.getElementById("victory-score").textContent = score;
+            document.getElementById("victory-highscore").textContent = saveData.highScore;
+
+            const listEl = document.getElementById("victory-review-list");
+            if (reviewItems.length === 0) {
+                listEl.innerHTML = `<p class="text-sm text-gray-400 text-center py-4">ยังไม่มีรายการคำศัพท์ที่ผ่านในรอบนี้ ลองเล่นใหม่อีกครั้งนะ!</p>`;
+            } else {
+                listEl.innerHTML = reviewItems.map(item => `
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-white/10 flex items-center justify-between gap-3">
+                        <div>
+                            <div class="font-game font-bold text-base sm:text-lg text-[#00E691]">${item.en}</div>
+                            <div class="text-xs sm:text-sm text-gray-300 mt-0.5">${item.th}</div>
+                        </div>
+                        <button onclick="speakEnglish('${item.en.replace(/'/g, "\\'")}', this)" 
+                            class="w-10 h-10 rounded-xl bg-[#00A2FF]/20 hover:bg-[#00A2FF] text-[#38BDF8] hover:text-white flex items-center justify-center flex-shrink-0 transition">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                `).join("");
+            }
+        }
+
+        function replayLastMode() {
+            if (lastPlayedMode === "escape") {
+                startEscapeMode();
+            } else {
+                startObbyMode();
+            }
+        }
+
+        function openLockerModal() {
+            const grid = document.getElementById("locker-items-grid");
+            grid.innerHTML = "";
+
+            LOCKER_SKINS.forEach(skin => {
+                const isUnlocked = saveData.highScore >= skin.unlockScore;
+                const isEquipped = saveData.equippedSkin === skin.id;
+
+                let btnHTML = "";
+                if (isEquipped) {
+                    btnHTML = `<button disabled class="w-full py-2 rounded-xl bg-[#00B06F]/25 text-[#00E691] border border-[#00B06F]/50 font-bold text-xs">✓ กำลังสวมใส่</button>`;
+                } else if (isUnlocked) {
+                    btnHTML = `<button onclick="equipSkin('${skin.id}')" class="btn-3d btn-blue w-full py-2 rounded-xl font-bold text-xs">สวมใส่สกินนี้</button>`;
+                } else {
+                    btnHTML = `<button disabled class="w-full py-2 rounded-xl bg-white/5 text-gray-400 font-bold text-xs">🔒 ต้องมี ${skin.unlockScore} คะแนน</button>`;
+                }
+
+                const card = document.createElement("div");
+                card.className = `bg-slate-950/90 p-4 rounded-2xl border ${isEquipped ? "border-[#00B06F]" : "border-white/10"} flex flex-col justify-between gap-3`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 bg-slate-900 rounded-xl p-1 flex-shrink-0">
+                            ${renderBlockyAvatarSVG(skin.id)}
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-sm text-white">${skin.name}</h5>
+                            <p class="text-xs text-gray-400 leading-snug mt-0.5">${skin.desc}</p>
+                        </div>
+                    </div>
+                    ${btnHTML}
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById("locker-modal").classList.remove("hidden");
+        }
+
+        function closeLockerModal() {
+            document.getElementById("locker-modal").classList.add("hidden");
+        }
+
+        function equipSkin(skinId) {
+            saveData.equippedSkin = skinId;
+            persistSaveData();
+            openLockerModal(); // refresh cards
+            playSFX("snap");
+            showToast("เปลี่ยนสกินตัวละครเรียบร้อย!", "success");
+        }
+
+        /* ============================================================================
+           9. NAVIGATION & TOAST HELPERS
+           ============================================================================ */
+        function showScreen(screenId) {
+            ["title-screen", "obby-screen", "escape-screen", "victory-screen"].forEach(id => {
+                document.getElementById(id).classList.add("hidden");
+            });
+            document.getElementById(screenId).classList.remove("hidden");
+        }
+
+        function goHome() {
+            window.speechSynthesis.cancel();
+            showScreen("title-screen");
+            updateGlobalUI();
+        }
+
+        function confirmExitToMenu() {
+            document.getElementById("confirm-modal").classList.remove("hidden");
+        }
+
+        function closeConfirmModal() {
+            document.getElementById("confirm-modal").classList.add("hidden");
+        }
+
+        function executeExitToMenu() {
+            closeConfirmModal();
+            goHome();
+        }
+
+        let toastTimer;
+        function showToast(msg, type = "success") {
+            const toast = document.getElementById("toast");
+            const icon = document.getElementById("toast-icon");
+            const text = document.getElementById("toast-text");
+
+            text.textContent = msg;
+            if (type === "error") {
+                toast.style.borderColor = "#F74B52";
+                icon.textContent = "🔥";
+            } else if (type === "info" || type === "warning") {
+                toast.style.borderColor = "#F5CD30";
+                icon.textContent = "💡";
+            } else {
+                toast.style.borderColor = "#00B06F";
+                icon.textContent = "🚩";
+            }
+
+            toast.classList.remove("translate-y-24", "opacity-0");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add("translate-y-24", "opacity-0");
+            }, 2600);
+        }
+
+        // เริ่มทำงานเมื่อโหลดหน้าเว็บเสร็จ
+        window.addEventListener("DOMContentLoaded", () => {
+            loadSaveData();
+        });
+    </script>
+</body>
+</html>
